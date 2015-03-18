@@ -32,6 +32,7 @@
 (require 'em-prompt)
 (require 'vc-git)
 (require 'magit)
+(require 'rx)
 (require 'cl-lib)
 
 ;; Cool prompt character candidates:
@@ -51,7 +52,8 @@
     ))
 
 (defvar eshell-better-prompt-ordinary-prompt-regex
-  "[^#$\n]* [#$] \\|[^#$\n]+[#$] ")
+  (rx (and (1+ (not (in ">#$\t\n")))
+           (0+ space) (in ">#$") space)))
 ;; TODO: colorize specific internal shell of eshell.
 ;; Example:
 ;;    sudo -i   : root@machine:~#
