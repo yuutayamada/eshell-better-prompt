@@ -96,13 +96,14 @@
 ;; FUNCTIONS
 (defun eshell-better-prompt-initialize ()
   "Initialize prompt configuration."
-    ;; Even user didn't turn on `eshell-highlight-prompt', this text should have
-    ;; read-only and sticky property to prevent deleting prompt.
   (let ((prompt-regex
          (apply `((lambda ()
                     (rx (and line-start
                              (or ,eshell-better-prompt-head
                                  ,eshell-better-prompt-ordinary-prompt-regex))))))))
+    ;; Even user didn't turn on `eshell-highlight-prompt', this text
+    ;; property should be read-only and sticky property to prevent
+    ;; deleting prompt.
     (setq eshell-better-prompt-head
           (propertize eshell-better-prompt-head
                       'read-only t 'rear-nonsticky t 'front-sticky t))
