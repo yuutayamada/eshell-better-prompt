@@ -96,11 +96,13 @@
 ;; FUNCTIONS
 (defun eshell-better-prompt-initialize ()
   "Initialize prompt configuration."
-  (let ((prompt-regex (format "^\\(%s\\|%s\\)"
-                              eshell-better-prompt-head
-                              eshell-better-prompt-ordinary-prompt-regex)))
     ;; Even user didn't turn on `eshell-highlight-prompt', this text should have
     ;; read-only and sticky property to prevent deleting prompt.
+  (let ((prompt-regex
+         (apply `((lambda ()
+                    (rx (and line-start
+                             (or ,eshell-better-prompt-head
+                                 ,eshell-better-prompt-ordinary-prompt-regex))))))))
     (setq eshell-better-prompt-head
           (propertize eshell-better-prompt-head
                       'read-only t 'rear-nonsticky t 'front-sticky t))
@@ -210,6 +212,22 @@ The format is like [user name][$?][system name]."
    ((magit-anything-modified-p)
     "☁")
    (t "☀")))
+
+(defun eshell-better-prompt-fontify-irregular-prompt ()
+  "Fontify irregular prompt string."
+  (let ((p (point)))
+    (when (and (not (member 'read-only (text-properties-at (1- (point)))))
+               (string-match eshell-better-prompt-ordinary-prompt-regex
+                             (thing-at-point 'line)))
+      (add-text-properties
+       (point-at-bol) p
+       '(read-only t
+                   font-lock-face eshell-prompt
+                   front-sticky (font-lock-face read-only)
+                   rear-nonsticky (font-lock-face read-only))))))
+
+(advice-add 'eshell-run-output-filters :after
+            'eshell-better-prompt-fontify-irregular-prompt)
 
 ;; I stole from here: http://www.emacswiki.org/emacs/EshellPrompt
 ;; Thank you EmacsWiki!
