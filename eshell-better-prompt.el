@@ -107,10 +107,16 @@
     (setq eshell-better-prompt-head
           (propertize eshell-better-prompt-head
                       'read-only t 'rear-nonsticky t 'front-sticky t))
-    (setq eshell-prompt-regexp prompt-regex)
-    ;; This configuration is needed if you turn on `eshell-highlight-prompt'
-    (setq eshell-skip-prompt-function
-          `(lambda () (search-forward-regexp ,prompt-regex)))))
+    (setq eshell-prompt-regexp prompt-regex)))
+
+;; Fallback function if eshell-bol is failed.
+;; This is for irregular prompt like "prelude> ".
+(advice-add 'eshell-bol :after
+            (lambda ()
+              (when (eq (point-at-bol) (point))
+                (while (and (eq 'eshell-prompt (face-at-point))
+                            (not (eq (point-at-eol) (point))))
+                  (forward-char 1)))))
 
 (defun eshell-better-prompt-set-window-limit ()
   "Set window width."
