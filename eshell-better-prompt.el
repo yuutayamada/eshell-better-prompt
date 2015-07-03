@@ -143,7 +143,7 @@ The format is like [user name][$?][system name]."
       (propertize
        (mapconcat 'identity
                   (delq nil
-                        `(,(eshell-better-prompt-git-weather (eshell/pwd))
+                        `(,(eshell-better-prompt-git-weather)
                           ,(mapconcat
                             'identity
                             (delq nil `(,(magit-get-remote) ,branch))
@@ -209,12 +209,12 @@ The format is like [user name][$?][system name]."
     (format "%s%s%s\n%s"
             section (mapconcat 'identity (delq nil args) section) section head)))
 
-(defun eshell-better-prompt-git-weather (directory)
+(defun eshell-better-prompt-git-weather ()
   "Return the weather that represents current git state with DIRECTORY."
   (cond
-   ((vc-git-conflicted-files directory)
+   ((vc-git-conflicted-files (eshell/pwd))
     "⚡")
-   ((magit-rebase-info)
+   ((magit-rebase-in-progress-p)
     "☂")
    ((magit-anything-modified-p)
     "☁")
