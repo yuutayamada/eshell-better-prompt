@@ -146,7 +146,7 @@ The format is like [user name][$?][system name]."
                         `(,(eshell-better-prompt-git-weather (eshell/pwd))
                           ,(mapconcat
                             'identity
-                            (delq nil `(,(magit-get-current-remote) ,branch))
+                            (delq nil `(,(magit-get-remote) ,branch))
                             "/")
                           ,(magit-get-current-tag)))
                   "|")
